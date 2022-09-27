@@ -1,4 +1,4 @@
-const { register } = require("../controllers/usersController");
+const { register,login } = require("../controllers/usersController");
 
 // const { addMessage, getMessages } = require("../controllers/messageController");
 const router = require("express").Router();
@@ -7,5 +7,7 @@ const router = require("express").Router();
 // router.post("/getmsg/", getMessages);
 
 router.post("/register", register);
+router.post("/login", login);
+
 
 module.exports = router;
