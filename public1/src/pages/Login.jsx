@@ -5,7 +5,7 @@ import Logo from "../assets/logo.svg";
 import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { registerRoute,loginRoute } from "../utils/APIRoutes";
+import { loginRoute } from "../utils/APIRoutes";
 
 
 function Login() {
@@ -24,6 +24,12 @@ function Login() {
       draggable: true,
       theme: "dark",
     };
+
+    useEffect(() => {
+      if(localStorage.getItem('chat-app-user')) {
+        navigate('/')
+      }
+    },[]);
 
     const handleSubmit = async(event) => {
         event.preventDefault();
