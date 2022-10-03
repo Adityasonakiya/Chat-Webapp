@@ -24,8 +24,37 @@ export default function SetAvatar() {
         theme: "dark",
       };
 
-    const setProfilePicture = async () => {};
-    useEffect( () => {
+    
+      useEffect(() => {
+        const fetch = async() => {
+        if(!localStorage.getItem('chat-app-user')) {
+          navigate('/login')
+        }
+      };
+      fetch();
+      },[]);  
+
+    const setProfilePicture = async () => {
+      if(selectedAvatar === undefined) {
+        toast.error("Please select an avatar", toastOptions);
+      } else {
+        const user = await JSON.parse(localStorage.getItem("chat-app-user"));
+        const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
+          image : avatars[selectedAvatar],
+        });
+
+         if(data.isSet) {
+          user.isAvatarImageSet = true;
+          user.avatarImage = data.image;
+          localStorage.setItem("chat-app-user", JSON.stringify(user));
+          navigate('/')
+         } else {
+          toast.error("Error setting avatar. Please try again", toastOptions);
+         }
+      }
+    };
+
+    useEffect( () => { 
       const fetching= async() => {
         const data = [];
         for (let i = 0; i < 4; i++) {
@@ -44,6 +73,10 @@ export default function SetAvatar() {
 
     return (
     <>
+    {
+      isLoading? <Container>
+        <img src={loader} alt="loader" className="loader" />
+      </Container> : (
         <Container>
           <div className="title-container">
             <h1>Pick an Avatar as your profile picture</h1>
@@ -71,29 +104,7 @@ export default function SetAvatar() {
           </button>
           <ToastContainer />
         </Container>
-        {/* <Container>
-            <div className="title-container">
-                <h1>Pick an avatar as your profile picture</h1>
-            </div>
-            <div className="avatars">
-            {avatars.map((avatar, index) => {
-                return (
-                    <div 
-                    key={index}
-                    className={`avatar ${
-                        selectedAvatar === index ? "selected" : ""
-                    }`}
-                    >
-                    <img 
-                    src={`data:image/svg+xml;base64,${avatar}`}
-                    alt="avatar"
-                    onClick={() => setSelectedAvatar(index)}
-                    />
-                    </div>
-                ); 
-            })}
-            </div>
-        </Container>; */}
+        )};
         <ToastContainer />
     </>
   );
@@ -148,7 +159,7 @@ const Container = styled.div`
     font-size: 1rem;
     text-transform: uppercase;
     &:hover {
-      background-color: #4e0eff;
+      background-color: #000;
     }
   }
 `;
