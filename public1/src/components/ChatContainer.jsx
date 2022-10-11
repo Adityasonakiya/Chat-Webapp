@@ -1,11 +1,34 @@
-import React from 'react';
+import React, { useEffect,useState } from 'react';
 import styled from 'styled-components';
 import ChatInput from './ChatInput.jsx';
 import Logout from './Logout.jsx';
 import Messages from './Messages.jsx';
+import axios from 'axios';
+import { sendMessageRoute, recieveMessageRoute } from '../utils/APIRoutes.js';
 
-export default function ChatContainer({ currentChat }) {
-  const handleSendMsg = async(msg) =>{};
+
+export default function ChatContainer({ currentChat, currentUser }) {
+
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const fetching = async() => {
+      const response = await axios.post(recieveMessageRoute, {
+        from: currentUser._id,
+        to: currentChat._id,
+      });
+      setMessages(response.data);
+    };
+    fetching();
+  }, [currentChat])
+
+  const handleSendMsg = async (msg) => {
+    await axios.post(sendMessageRoute, {
+      from: currentUser._id,
+      to: currentChat._id,
+      message: msg,
+    });
+  };
   return (
     <>
       {
@@ -23,7 +46,21 @@ export default function ChatContainer({ currentChat }) {
               </div>
               <Logout />
             </div>
-            <Messages />
+            <div className='chat-messages'>
+              {
+                messages.map((message) => {
+                  return (
+                    <div>
+                      <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
+                        <div className='content'>
+                          <p>{message.message}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </div>
             <ChatInput handleSendMsg={handleSendMsg} />
           </Container>
         )}
