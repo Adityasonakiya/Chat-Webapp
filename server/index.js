@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
 const messageRoute = require("./routes/messagesRoute");
 const socket = require("socket.io");
+const path = require("path");
 
 const app = express();
 require("dotenv").config();
@@ -23,6 +24,14 @@ mongoose.connect(process.env.MONGO_URL, {
 .catch((err) => {
     console.log(err.message);
 });
+
+__dirname = path.resolve();
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../public1/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "public1", "build", "index.html"));
+  });
+}
 
 const server = app.listen(process.env.PORT, () => {
     console.log(`Server started on ${process.env.PORT}`);
