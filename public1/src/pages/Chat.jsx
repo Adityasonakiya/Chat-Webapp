@@ -62,6 +62,7 @@ function Chat() {
                     )
                 }
             </div>
+            <span className="credit">Made with ❤️ by Aditya</span>
         </Container>
     );
 };
@@ -85,6 +86,10 @@ const Container = styled.div`
             grid-template-columns:35% 65%; 
         }
     }    
+    .credit {
+        color: white;
+        font-size: 20px;
+    }
 `
 
 export default Chat;
